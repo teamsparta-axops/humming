@@ -218,6 +218,9 @@ class LayerConfig(BaseHummingConfig):
                 dtypes.float8e5m2,
             )
 
+        # Odd-code E2M1 weights use the native layout on any toolkit (software conversion without the PTX).
+        if self.b_dtype == dtypes.float3e2m1odd and self.a_dtype in (dtypes.float16, dtypes.bfloat16):
+            return True
         return self.b_dtype in accepted_b_dtype
 
     @property

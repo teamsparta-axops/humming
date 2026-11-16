@@ -638,8 +638,13 @@ class Sm100UmmaHeuristics(DeviceHeuristics):
 
     @classmethod
     def _select_dequant_warpgroups(cls, layer_config, shape_m, config):
-        # Native conversion keeps up with one warpgroup; register dequantization does not.
-        if layer_config.use_raw_weight or layer_config.use_flat_weight or layer_config.use_native_dequant:
+        # Native conversion keeps up with one warpgroup; register dequantization does not. Odd-code E2M1
+        # weights add an unpack before the native conversion.
+        forced = os.environ.get("HUMMING_UMMA_DEQUANT_WARPGROUPS")
+        if forced:
+            return config | {"umma_num_dequant_warpgroups": int(forced)}
+        is_unpacked_native = layer_config.use_native_dequant and layer_config.b_dtype == dtypes.float3e2m1odd
+        if layer_config.use_raw_weight or layer_config.use_flat_weight or layer_config.use_native_dequant and not is_unpacked_native:
             return config
         # Aligned integers convert to FP16/BF16 with one logic op and one subtraction.
         a_dtype, b_dtype = layer_config.a_dtype, layer_config.b_dtype

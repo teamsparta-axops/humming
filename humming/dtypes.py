@@ -26,6 +26,8 @@ class DataType:
     def from_str(cls, s):
         if isinstance(s, DataType):
             return s
+        if isinstance(s, str) and s.lower() == "float3e2m1odd":
+            return Float3E2M1OddType()
         if "float" in s:
             return FloatingPointType.from_str(s)
         elif "int" in s:
@@ -186,6 +188,27 @@ class FloatingPointType(DataType):
         return int(dtype_id)
 
 
+@dataclasses.dataclass(kw_only=True, repr=False)
+class Float3E2M1OddType(FloatingPointType):
+    """The E2M1 values whose mantissa bit is 1: {±0.5, ±1.5, ±3, ±6}. A 3-bit code holds the sign and the two
+    exponent bits; the FP4 code is ``(code << 1) | 1``, so weights decode with the native E2M1 conversion."""
+
+    num_bits: int = 3
+    exponent_bits: int = 2
+    mantissa_bits: int = 0
+
+    __hash__ = DataType.__hash__
+
+    def to_str(self):
+        return "float3e2m1odd"
+
+    def to_cpp_str(self):
+        return "Float3E2M1Odd"
+
+    def id(self):
+        return super().id() + 50
+
+
 uint1 = IntegerType.from_str("uint1")
 uint2 = IntegerType.from_str("uint2")
 uint3 = IntegerType.from_str("uint3")
@@ -217,6 +240,7 @@ float8e4m3 = FloatingPointType.from_str("float8e4m3")
 float8e5m2 = FloatingPointType.from_str("float8e5m2")
 float8e5m3 = FloatingPointType.from_str("float8e5m3")
 float8e8m0 = FloatingPointType.from_str("float8e8m0")
+float3e2m1odd = Float3E2M1OddType()
 
 float16 = FloatingPointType.from_str("float16")
 bfloat16 = FloatingPointType.from_str("bfloat16")

@@ -25,6 +25,10 @@ class Compiler:
             "on",
         )
         flags = [f"-DHUMMING_DEBUG_KERNEL={int(enabled)}"]
+        if os.environ.get("HUMMING_DEBUG_CHEAP_ODD_EXPAND"):
+            flags.append("-DHUMMING_DEBUG_CHEAP_ODD_EXPAND=1")
+        if os.environ.get("HUMMING_DEBUG_SOFT_ODD_E2M1"):
+            flags.append("-DHUMMING_DEBUG_SOFT_ODD_E2M1=1")
         if enabled:
             timeout_clocks = current_device.sm_clock_khz * 1000 * 10
             flags.append(f"-DHUMMING_DEBUG_KERNEL_TIMEOUT_CLOCKS={timeout_clocks}")

@@ -69,7 +69,7 @@ public:
         uint4 zp_vals = arith.prepare_zp_for_dequant(buffer_id, i);
         uint32_t *zp_vals_ptr = reinterpret_cast<uint32_t *>(&zp_vals);
         if constexpr (kUseNativeDequant) {
-          dequant_native<ElementQB, ElementB>(regs_qb[buffer_id], regs_b_ptr, i);
+          dequant_native<ElementQB, ElementB, kNumWarpShapeNSplits>(regs_qb[buffer_id], regs_b_ptr, i);
         } else {
           dequant<ElementQB, ElementB, kHasZeroPoint, kIsFpZeroPoint, kNumWarpShapeNSplits>(regs_qb[buffer_id], regs_b_ptr, i, zp_vals_ptr);
         }

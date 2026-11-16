@@ -77,3 +77,18 @@ using BFloat16 = FloatingPointType<16, 8, 7>;
 using Float32 = FloatingPointType<32, 8, 23>;
 
 using Float8E8M0 = FloatingPointType<8, 8, 0>;
+
+// The E2M1 values whose mantissa bit is 1 ({±0.5, ±1.5, ±3, ±6}), stored as 3-bit codes (sign, two exponent
+// bits). The FP4 code is (code << 1) | 1, so weights decode with the native E2M1 conversion.
+class Float3E2M1Odd {
+public:
+  static constexpr bool kIsIntegerType = false;
+  static constexpr bool kIsFloatingPointType = true;
+  static constexpr uint32_t kBits = 3;
+  static constexpr uint32_t kNumBits = 3;
+  static constexpr uint32_t kSignBits = 1;
+  static constexpr bool kIsSigned = true;
+  static constexpr uint32_t kExponentBits = 2;
+  static constexpr uint32_t kMantissaBits = 0;
+  static constexpr uint32_t kId = get_dtype_id(2, kIsSigned, 3, 2, 0) + 50;
+};
